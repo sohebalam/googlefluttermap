@@ -3,12 +3,13 @@ import 'package:flutter_google_places_hoc081098/flutter_google_places_hoc081098.
 import 'package:google_api_headers/google_api_headers.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:google_maps_webservice/places.dart';
-import 'package:googlemapsapp/map.dart';
 
 class Home extends StatefulWidget {
   @override
   _HomeState createState() => _HomeState();
 }
+
+Set<Marker> markers = Set<Marker>();
 
 class _HomeState extends State<Home> {
   String googleApikey =
@@ -27,22 +28,23 @@ class _HomeState extends State<Home> {
           backgroundColor: Colors.deepPurpleAccent,
         ),
         body: Stack(children: [
-          // GoogleMap(
-          //   //Map widget from google_maps_flutter package
-          //   zoomGesturesEnabled: true, //enable Zoom in, out on map
-          //   initialCameraPosition: CameraPosition(
-          //     //initial position in map
-          //     target: startLocation, //initial position
-          //     zoom: 14.0, //initial zoom level
-          //   ),
-          //   mapType: MapType.normal, //map type
-          //   onMapCreated: (controller) {
-          //     //method called when map is created
-          //     setState(() {
-          //       mapController = controller;
-          //     });
-          //   },
-          // ),
+          GoogleMap(
+            markers: markers,
+            //Map widget from google_maps_flutter package
+            zoomGesturesEnabled: true, //enable Zoom in, out on map
+            initialCameraPosition: CameraPosition(
+              //initial position in map
+              target: startLocation, //initial position
+              zoom: 14.0, //initial zoom level
+            ),
+            mapType: MapType.normal, //map type
+            onMapCreated: (controller) {
+              //method called when map is created
+              setState(() {
+                mapController = controller;
+              });
+            },
+          ),
 
           //search autocomplete inputs
           Positioned(
@@ -85,10 +87,13 @@ class _HomeState extends State<Home> {
                       mapController?.animateCamera(
                           CameraUpdate.newCameraPosition(
                               CameraPosition(target: source, zoom: 17)));
-                      print('Source Location: $sourceLocation');
-                      print('Source Location: $source');
-                      // print('Source Location Lat: ${geometry.location.lat}');
-                      // print('Source Location Lng: ${geometry.location.lng}');
+
+                      markers.add(Marker(
+                          markerId: MarkerId(placeid as String),
+                          infoWindow: InfoWindow(
+                            title: 'Source: ${placeid as String}',
+                          ),
+                          position: source));
                     }
                   },
                   child: Padding(
